@@ -268,8 +268,13 @@ func (r IngressRule) GetHost() string {
 	return host
 }
 
-func (r TCPIngressRuleValue) ParseALPNOptions() string {
-	opt := append([]string{}, r.ALPN...) // copy slice, don't modify the input
+func (r IngressRule) ParseALPNOptions() string {
+	var opt []string
+	if r.HTTP != nil {
+		opt = append([]string{}, r.HTTP.ALPN...) // copy slice, don't modify the input
+	} else if r.TCP != nil {
+		opt = append([]string{}, r.TCP.ALPN...) // copy slice, don't modify the input
+	}
 	if len(opt) <= 0 {
 		return ""
 	}
